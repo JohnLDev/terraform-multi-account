@@ -1,0 +1,21 @@
+{
+  "name": "azureiac",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "dev":"dotenv -e .env -- bash -c 'func start --script-root ./src/4-infra/functions'",
+
+    "deploy:func": "dotenv -e .env -- bash -c 'func azure functionapp publish $FUNCTION_APP_NAME --script-root ./src/4-infra/functions --javascript --verbose'",
+    "deploy":"npx dotenv -e ./.env -- make deploy",
+
+
+    "deploy:dev":"STAGE=dev yarn deploy",
+    "deploy:sandbox":"STAGE=sandbox yarn deploy",
+    "deploy:prd":"STAGE=prd yarn deploy"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "dotenv-cli": "^8.0.0"
+  }
+}
