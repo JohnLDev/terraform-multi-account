@@ -29,3 +29,9 @@ module "function_app" {
 }
 
 
+module "vnet" {
+  source  = "../modules/vnet"
+  name    = "modular-tf-vnet"
+  rg_name = azurerm_resource_group.rg_group.name
+  stage   = var.stage
+}
