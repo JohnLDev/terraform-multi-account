@@ -32,6 +32,12 @@ resource "azurerm_storage_account" "tf_sa" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
   account_kind             = "StorageV2"
+  blob_properties {
+    delete_retention_policy {
+      permanent_delete_enabled = true
+      days                     = 30
+    }
+  }
 }
 
 resource "azurerm_storage_container" "backend" {
