@@ -35,3 +35,11 @@ module "vnet" {
   rg_name = azurerm_resource_group.rg_group.name
   stage   = var.stage
 }
+
+
+module "dns" {
+  source  = "../modules/dns"
+  stage   = var.stage
+  rg_name = azurerm_resource_group.rg_group.name
+
+}
