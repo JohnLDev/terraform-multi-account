@@ -47,4 +47,10 @@ resource "azurerm_linux_function_app" "function_app" {
       node_version = 20
     }
   }
+  lifecycle {
+    ignore_changes = [
+      app_settings["APPINSIGHTS_INSTRUMENTATIONKEY"],
+      app_settings["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    ]
+  }
 }

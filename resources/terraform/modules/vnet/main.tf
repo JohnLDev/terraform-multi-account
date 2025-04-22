@@ -152,19 +152,3 @@ resource "azurerm_subnet_route_table_association" "private" {
   subnet_id      = azurerm_subnet.private[count.index].id
   route_table_id = azurerm_route_table.private.id
 }
-
-# Outputs
-output "vnet_id" {
-  description = "The ID of the Virtual Network"
-  value       = azurerm_virtual_network.main.id
-}
-
-output "public_subnet_ids" {
-  description = "List of public subnet IDs"
-  value       = azurerm_subnet.public[*].id
-}
-
-output "private_subnet_ids" {
-  description = "List of private subnet IDs"
-  value       = azurerm_subnet.private[*].id
-}
