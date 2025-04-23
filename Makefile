@@ -30,7 +30,7 @@ plan:
 
 apply:
 	@echo "🚀 Applying infrastructure in environment '$(STAGE)'..."
-	$(TERRAFORM) apply -var "stage=$(STAGE)" 
+	$(TERRAFORM) apply -var "stage=$(STAGE)" -auto-approve
 
 deploy: init apply
 
