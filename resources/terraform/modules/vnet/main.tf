@@ -35,6 +35,17 @@ resource "azurerm_subnet" "public" {
   resource_group_name  = data.azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = [cidrsubnet(var.vnet_address_space[0], 8, count.index)]
+
+  dynamic "delegation" {
+    for_each = count.index == 1 ? [1] : []
+    content {
+      name = "web-delegation-${count.index + 1}"
+      service_delegation {
+        name    = "Microsoft.App/environments"
+        actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+      }
+    }
+  }
 }
 
 # Private Subnets
@@ -44,6 +55,19 @@ resource "azurerm_subnet" "private" {
   resource_group_name  = data.azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = [cidrsubnet(var.vnet_address_space[0], 8, count.index + 2)]
+}
+
+resource "azurerm_nat_gateway" "nat_gateway" {
+  name                = "modular-tf-nat-gateway-${var.stage}"
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  sku_name            = "Standard"
+}
+
+resource "azurerm_subnet_nat_gateway_association" "private" {
+  count          = 2
+  subnet_id      = azurerm_subnet.private[count.index].id
+  nat_gateway_id = azurerm_nat_gateway.nat_gateway.id
 }
 
 # Network Security Group for Public Subnets
@@ -100,15 +124,27 @@ resource "azurerm_network_security_group" "private" {
   resource_group_name = data.azurerm_resource_group.rg.name
 
   security_rule {
-    name                       = "deny-internet"
+    name                       = "AllowOutbound"
     priority                   = 100
     direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "DenyInbound"
+    priority                   = 100
+    direction                  = "Inbound"
     access                     = "Deny"
     protocol                   = "*"
     source_port_range          = "*"
     destination_port_range     = "*"
     source_address_prefix      = "*"
-    destination_address_prefix = "Internet"
+    destination_address_prefix = "*"
   }
 
   tags = {

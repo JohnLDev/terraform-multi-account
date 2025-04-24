@@ -20,20 +20,6 @@ resource "azurerm_storage_container" "main_blob_storage" {
   container_access_type = "private"
 }
 
-module "function_app" {
-  source                     = "../modules/functionApp"
-  rg_name                    = azurerm_resource_group.rg_group.name
-  location                   = azurerm_resource_group.rg_group.location
-  stage                      = var.stage
-  storage_account_name       = module.storage_account.storage_account_name
-  storage_account_access_key = module.storage_account.storage_account_access_key
-  app_service_plan_name      = "modular-tf-service-plan"
-  app_insights_name          = "modular-tf-appinsights"
-  function_app_name          = "modular-tf-function-app"
-  service_plan_sku           = "Y1"
-}
-
-
 module "vnet" {
   source  = "../modules/vnet"
   name    = "modular-tf-vnet"
@@ -41,6 +27,18 @@ module "vnet" {
   stage   = var.stage
 }
 
+module "function_app" {
+  source                = "../modules/functionApp"
+  rg_name               = azurerm_resource_group.rg_group.name
+  location              = azurerm_resource_group.rg_group.location
+  stage                 = var.stage
+  storage_account_name  = module.storage_account.storage_account_name
+  app_service_plan_name = "modular-tf-service-plan"
+  app_insights_name     = "modular-tf-appinsights"
+  function_app_name     = "modular-tf-function-app"
+  service_plan_sku      = "FC1"
+  subnet_id             = module.vnet.public_subnet_ids[1]
+}
 
 module "dns" {
   source  = "../modules/dns"

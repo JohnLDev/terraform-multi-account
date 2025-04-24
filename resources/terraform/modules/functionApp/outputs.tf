@@ -3,5 +3,5 @@ output "app_service_plan_id" {
 }
 
 output "function_app_name" {
-  value = azurerm_linux_function_app.function_app.name
+  value = azurerm_function_app_flex_consumption.function_app.name
 }

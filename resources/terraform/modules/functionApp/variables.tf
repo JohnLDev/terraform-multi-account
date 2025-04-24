@@ -30,6 +30,7 @@ variable "service_plan_sku" {
   validation {
     condition = contains([
       "F1", "D1",             # Free/Shared
+      "FC1",                  # Function Consumption
       "B1", "B2", "B3",       # Basic
       "S1", "S2", "S3",       # Standard
       "P1v2", "P2v2", "P3v2", # Premium v2
@@ -56,7 +57,7 @@ variable "storage_account_name" {
   type        = string
 }
 
-variable "storage_account_access_key" {
-  description = "Access key for the Storage Account"
+variable "subnet_id" {
+  description = "ID of the subnet"
   type        = string
 }
