@@ -4,6 +4,11 @@ output "vnet_id" {
   value       = azurerm_virtual_network.main.id
 }
 
+output "vnet_name" {
+  description = "The name of the Virtual Network"
+  value       = azurerm_virtual_network.main.name
+}
+
 output "public_subnet_ids" {
   description = "List of public subnet IDs"
   value       = azurerm_subnet.public[*].id

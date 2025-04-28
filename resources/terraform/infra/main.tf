@@ -63,3 +63,11 @@ module "bastion_host" {
   storage_account_name = module.storage_account.storage_account_name
   domain_zone_name     = module.dns.domain_zone_name
 }
+
+module "cosmos_db" {
+  source    = "../modules/cosmosDb"
+  stage     = var.stage
+  rg_name   = azurerm_resource_group.rg_group.name
+  vault_id  = module.key_vault.vault_id
+  vnet_name = module.vnet.vnet_name
+}

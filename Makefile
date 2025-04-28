@@ -32,7 +32,8 @@ apply:
 	@echo "🚀 Applying infrastructure in environment '$(STAGE)'..."
 	$(TERRAFORM) apply -var "stage=$(STAGE)" -auto-approve
 
-deploy: init apply
+deploy: apply
+# deploy: init apply
 
 destroy:
 	@echo "🔥 Destroying infrastructure in environment '$(STAGE)'..."
