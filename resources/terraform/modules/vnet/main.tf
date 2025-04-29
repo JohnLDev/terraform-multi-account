@@ -57,18 +57,18 @@ resource "azurerm_subnet" "private" {
   address_prefixes     = [cidrsubnet(var.vnet_address_space[0], 8, count.index + 2)]
 }
 
-resource "azurerm_nat_gateway" "nat_gateway" {
-  name                = "modular-tf-nat-gateway-${var.stage}"
-  resource_group_name = data.azurerm_resource_group.rg.name
-  location            = data.azurerm_resource_group.rg.location
-  sku_name            = "Standard"
-}
+# resource "azurerm_nat_gateway" "nat_gateway" {
+#   name                = "modular-tf-nat-gateway-${var.stage}"
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   location            = data.azurerm_resource_group.rg.location
+#   sku_name            = "Standard"
+# }
 
-resource "azurerm_subnet_nat_gateway_association" "private" {
-  count          = 2
-  subnet_id      = azurerm_subnet.private[count.index].id
-  nat_gateway_id = azurerm_nat_gateway.nat_gateway.id
-}
+# resource "azurerm_subnet_nat_gateway_association" "private" {
+#   count          = 2
+#   subnet_id      = azurerm_subnet.private[count.index].id
+#   nat_gateway_id = azurerm_nat_gateway.nat_gateway.id
+# }
 
 # Network Security Group for Public Subnets
 resource "azurerm_network_security_group" "public" {

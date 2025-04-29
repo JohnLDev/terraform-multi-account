@@ -35,6 +35,14 @@ apply:
 deploy: apply
 # deploy: init apply
 
+deployFunc:
+	@echo "Deploying functions to ${FUNCTION_APP_NAME} function app"
+	cp package.json src/4-infra/functions
+	cp -r node_modules src/4-infra/functions
+	func azure functionapp publish $(FUNCTION_APP_NAME) --script-root ./src/4-infra/functions --javascript --verbose
+	rm -rf src/4-infra/functions/package.json
+	rm -rf src/4-infra/functions/node_modules
+
 destroy:
 	@echo "🔥 Destroying infrastructure in environment '$(STAGE)'..."
 	$(TERRAFORM) destroy -var "stage=$(STAGE)" -auto-approve

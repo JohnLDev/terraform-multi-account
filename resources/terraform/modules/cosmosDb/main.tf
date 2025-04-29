@@ -19,6 +19,11 @@ resource "azurerm_key_vault_secret" "admin_password" {
   key_vault_id = var.vault_id
 }
 
+resource "azurerm_key_vault_secret" "admin_user" {
+  name         = "cosmosdb-admin-user"
+  value        = "citus"
+  key_vault_id = var.vault_id
+}
 
 resource "azurerm_cosmosdb_postgresql_cluster" "cosmos_db" {
   name                                 = "modular-tf-cosmosdb-${var.stage}"
@@ -76,4 +81,11 @@ resource "azurerm_private_dns_a_record" "pe_record" {
   resource_group_name = data.azurerm_resource_group.rg.name
   ttl                 = 300
   records             = [azurerm_private_endpoint.cosmos_pe.private_service_connection[0].private_ip_address]
+}
+
+
+resource "azurerm_key_vault_secret" "cosmosdb_host" {
+  name         = "cosmosdb-host"
+  value        = "${azurerm_cosmosdb_postgresql_cluster.cosmos_db.name}.${azurerm_private_dns_zone.postgresql.name}"
+  key_vault_id = var.vault_id
 }

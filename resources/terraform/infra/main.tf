@@ -20,11 +20,25 @@ resource "azurerm_storage_container" "main_blob_storage" {
   container_access_type = "private"
 }
 
+module "key_vault" {
+  source  = "../modules/keyVault"
+  stage   = var.stage
+  rg_name = azurerm_resource_group.rg_group.name
+}
+
 module "vnet" {
   source  = "../modules/vnet"
   name    = "modular-tf-vnet"
   rg_name = azurerm_resource_group.rg_group.name
   stage   = var.stage
+}
+
+module "cosmos_db" {
+  source    = "../modules/cosmosDb"
+  stage     = var.stage
+  rg_name   = azurerm_resource_group.rg_group.name
+  vault_id  = module.key_vault.vault_id
+  vnet_name = module.vnet.vnet_name
 }
 
 module "function_app" {
@@ -38,6 +52,7 @@ module "function_app" {
   function_app_name     = "modular-tf-function-app"
   service_plan_sku      = "FC1"
   subnet_id             = module.vnet.public_subnet_ids[1]
+  key_vault_id          = module.key_vault.vault_id
 }
 
 module "dns" {
@@ -45,12 +60,6 @@ module "dns" {
   stage   = var.stage
   rg_name = azurerm_resource_group.rg_group.name
 
-}
-
-module "key_vault" {
-  source  = "../modules/keyVault"
-  stage   = var.stage
-  rg_name = azurerm_resource_group.rg_group.name
 }
 
 module "bastion_host" {
@@ -64,10 +73,4 @@ module "bastion_host" {
   domain_zone_name     = module.dns.domain_zone_name
 }
 
-module "cosmos_db" {
-  source    = "../modules/cosmosDb"
-  stage     = var.stage
-  rg_name   = azurerm_resource_group.rg_group.name
-  vault_id  = module.key_vault.vault_id
-  vnet_name = module.vnet.vnet_name
-}
+

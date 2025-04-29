@@ -3,6 +3,8 @@ data "azurerm_storage_account" "storage_account" {
   resource_group_name = var.rg_name
 }
 
+
+
 resource "azurerm_service_plan" "service_plan" {
   name                = "${var.app_service_plan_name}-${var.stage}"
   location            = var.location
@@ -58,6 +60,11 @@ resource "azurerm_function_app_flex_consumption" "function_app" {
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.app_insights.connection_string
     APPINSIGHTS_INSTRUMENTATIONKEY        = azurerm_application_insights.app_insights.instrumentation_key
     WEBSITE_VNET_ROUTE_ALL                = "1"
+    PGDATABASE                            = "postgres"
+    PGHOST                                = data.azurerm_key_vault_secret.cosmosdb_host.value
+    PGUSER                                = data.azurerm_key_vault_secret.admin_user.value
+    PGPASSWORD                            = data.azurerm_key_vault_secret.admin_password.value
+    PGPORT                                = "5432"
   }
 
   site_config {
